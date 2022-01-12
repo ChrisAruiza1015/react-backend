@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const port = 5000;
-
+const cors = require('cors');
+app.use(cors());
 app.use(express.json());
 
 const users = { 
@@ -33,9 +34,9 @@ const users = {
           job: 'Bartender',
        },
        {
-        "id": "qwe123",
-        "job": "Zookeeper",
-        "name": "Cindy"
+        id: "qwe123",
+        job: "Zookeeper",
+        name: "Cindy"
         }
     ]
  }
