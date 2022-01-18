@@ -41,6 +41,11 @@ const users = {
     ]
  }
 
+
+app.get('/', (req,res) => {
+    res.send('Hello World!');
+});
+
 app.get('/users/', (req, res) => {
     const name = req.query.name;
     if (name != undefined){
@@ -70,19 +75,79 @@ function findUserById(id) {
     //return users['users_list'].filter( (user) => user['id'] === id);
 }
 
+//
+//app.post('/users', (req, res) => {
+//    const userToAdd = req.body;
+//    addUser(userToAdd);
+//    res.status(200).end();
+//});
+
+
+function generateRandomID() {
+    var id = '';
+    var alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    var numbers = '0123456789';
+    var alphabetLength = alphabet.length;
+    var numbersLength = numbers.length;
+    for(var i = 0; i < 3; i++)
+    { 
+        id += alphabet.charAt(Math.floor(Math.random() * alphabetLength));
+    }
+    for(var i = 0; i < 3; i++)
+    {
+        id += numbers.charAt(Math.floor(Math.random() * numbersLength));
+    }
+
+    return id;
+}
+
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
+    userToAdd.id = generateRandomID();
     addUser(userToAdd);
-    res.status(200).end();
+    res.status(201).send(userToAdd).end();
 });
 
 function addUser(user){
     users['users_list'].push(user);
 }
 
+
 const findUserByName = (name) => { 
     return users['users_list'].filter( (user) => user['name'] === name); 
 }
+
+app.delete('/users/:id', (req, res) => {
+    const idToDelete = req.params['id'];
+    const userToDelete = findUserById(idToDelete)
+    if(userToDelete === undefined || userToDelete.length == 0)
+    {
+        res.status(404).send("Resource not found.");
+    }
+    else
+    {
+        const indexToDelete = users['users_list'].indexOf(userToDelete);
+        users['users_list'].splice(indexToDelete,1);
+        res.status(204).send("User Deleted").end();
+    }
+    
+});
+
+/*
+function deleteByID(id, res)
+{
+    if(findUserById(id) === undefined)
+    {
+        res.status(404).send('Resource not found!').end();
+    }
+    else
+    {
+        var deleteIndex = users.users_list.indexOf(id);
+        users.users_list.splice(deleteIndex,1);
+        res.status(204).send('User removed').end();
+    }
+}
+*/
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
